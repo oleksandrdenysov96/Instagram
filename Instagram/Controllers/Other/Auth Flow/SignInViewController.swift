@@ -106,14 +106,32 @@ class SignInViewController: AuthFlowViewController {
         }
 
         // Sign in with AuthManager
+
+        AuthManager.shared.signIn(email: email, password: password) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    let vc = TabBarViewController()
+                    vc.modalPresentationStyle = .fullScreen
+                    self?.present(vc, animated: true)
+
+                case .failure(let failure):
+                    IGLogger.shared.debugInfo("end: sign in vc end with log in error")
+                }
+            }
+        }
     }
 
     @objc
     private func didTapCreateAccount() {
         let vc = SignUpViewController()
-//        vc.completion {
-//
-//        }
+        vc.completion = {
+            DispatchQueue.main.async { [weak self] in
+                let tabVC = TabBarViewController()
+                tabVC.modalPresentationStyle = .fullScreen
+                self?.present(tabVC, animated: true)
+            }
+        }
 
         navigationController?.pushViewController(vc, animated: true)
     }

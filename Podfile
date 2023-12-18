@@ -9,6 +9,7 @@ pod 'Firebase/Firestore'
 pod 'Firebase/Storage'
 pod 'Firebase/Analytics'
 pod 'Firebase/Auth'
+pod 'SDWebImage'
 
   # Pods for Instagram
 

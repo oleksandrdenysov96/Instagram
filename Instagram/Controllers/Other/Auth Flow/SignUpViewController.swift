@@ -38,6 +38,8 @@ class SignUpViewController: AuthFlowViewController {
         return button
     }()
 
+    public var completion: (() -> Void)?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Create Account"
@@ -164,8 +166,31 @@ class SignUpViewController: AuthFlowViewController {
             )
             return
         }
+        let pictureData = profileImageView.image?.pngData()
 
         // Sign up with AuthManager
+        AuthManager.shared.signUp(
+            email: email,
+            username: username,
+            password: password,
+            profilePicture: pictureData) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let userModel):
+                        UserDefaults.standard.setValue(userModel.email, forKey: "email")
+                        UserDefaults.standard.setValue(userModel.username, forKey: "username")
+
+                        // Going back to SignIn and triggering already created by SignInVC our completion
+                        // with redirection on TabBarVC
+                        self?.navigationController?.popToRootViewController(animated: true)
+                        self?.completion?()
+
+                    case .failure(let err):
+                        IGLogger.shared.debugInfo("end: signupcontroller end with failure")
+                    }
+                }
+
+            }
     }
 }
 
